@@ -10,10 +10,10 @@ import UIKit
 import ActionCell
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+    
     var tableView: UITableView! = UITableView()
     var output: UILabel = UILabel()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,91 +28,45 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.tableFooterView = UIView()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: UITableViewCell.description())
         tableView.register(CustomTableViewCell.self, forCellReuseIdentifier: CustomTableViewCell.description())
-
+        
         view.addSubview(output)
         output.translatesAutoresizingMaskIntoConstraints = false
         output.textAlignment = .center
         output.backgroundColor = UIColor.lightGray
-
+        
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", options: .alignAllLastBaseline, metrics: nil, views: ["tableView":tableView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[output]|", options: .alignAllLastBaseline, metrics: nil, views: ["output":output]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[tableView]-[output(60)]|", options: .alignAllLeading, metrics: nil, views: ["tableView":tableView, "output":output]))
     }
-
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 70
     }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+    
+    // !! Modified. Enough sections to make it easier to reproduce.
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 20
     }
-
+    
+    // !! Modified.
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch (indexPath as NSIndexPath).row {
+        
+        // !! Modified. 1 custom cell, 1 identifier for all rows in all sections
+        let cell = tableView.dequeueReusableCell(withIdentifier: CustomTableViewCell.description(), for: indexPath) as! CustomTableViewCell
+        
+        switch (indexPath as NSIndexPath).section {
         case 0:
-            let cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.description(), for: indexPath)
-            cell.textLabel?.text = "style: ladder"
-            let wrapper = ActionCell()
-            wrapper.delegate = self
-            wrapper.animationStyle = .ladder
-            wrapper.wrap(cell: cell, 
-                         actionsLeft: [
-                            {
-                                let action = IconTextAction(action: "cell 0 -- left 0")
-                                action.icon.image = #imageLiteral(resourceName: "image_5").withRenderingMode(.alwaysTemplate)
-                                action.icon.tintColor = UIColor.white
-                                action.label.text = "Hello"
-                                action.label.font = UIFont.systemFont(ofSize: 12)
-                                action.label.textColor = UIColor.white
-                                action.backgroundColor = UIColor(red:0.14, green:0.69, blue:0.67, alpha:1.00)
-                                return action
-                            }(),
-                            {
-                                let action = TextAction(action: "cell 0 -- left 1")
-                                action.label.text = "Long Sentence"
-                                action.label.font = UIFont.systemFont(ofSize: 12)
-                                action.label.textColor = UIColor.white
-                                action.backgroundColor = UIColor(red:1.00, green:0.78, blue:0.80, alpha:1.00)
-                                return action
-                            }(),
-                            {
-                                let action = IconAction(action: "cell 0 -- left 2")
-                                action.icon.image = #imageLiteral(resourceName: "image_0").withRenderingMode(.alwaysTemplate)
-                                action.icon.tintColor = UIColor.white
-                                action.backgroundColor = UIColor(red:0.51, green:0.83, blue:0.73, alpha:1.00)
-                                return action
-                            }(),
-                            ],
-                         actionsRight: [
-                            {
-                                let action = IconTextAction(action: "cell 0 -- right 0")
-                                action.icon.image = #imageLiteral(resourceName: "image_1").withRenderingMode(.alwaysTemplate)
-                                action.icon.tintColor = UIColor.white
-                                action.label.text = "Hello"
-                                action.label.font = UIFont.systemFont(ofSize: 12)
-                                action.label.textColor = UIColor.white
-                                action.backgroundColor = UIColor(red:0.14, green:0.69, blue:0.67, alpha:1.00)
-                                return action
-                            }(),
-                            {
-                                let action = TextAction(action: "cell 0 -- right 1")
-                                action.label.text = "Long Sentence"
-                                action.label.font = UIFont.systemFont(ofSize: 12)
-                                action.label.textColor = UIColor.white
-                                action.backgroundColor = UIColor(red:0.51, green:0.83, blue:0.73, alpha:1.00)
-                                return action
-                            }(),
-                            {
-                                let action = IconAction(action: "cell 0 -- right 2")
-                                action.icon.image = #imageLiteral(resourceName: "image_2").withRenderingMode(.alwaysTemplate)
-                                action.icon.tintColor = UIColor.white
-                                action.backgroundColor = UIColor(red:1.00, green:0.78, blue:0.80, alpha:1.00)
-                                return action
-                            }(),
-                            ])
+            
+            // !! Modified. This should have no actions.
+            cell.textLabel?.text = "Not wrapped. No actions?!"
+            
             return cell
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.description(), for: indexPath)
+            
             cell.textLabel?.text = "style: ladder_emergence"
             let wrapper = ActionCell()
             wrapper.delegate = self
@@ -174,7 +128,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                             ])
             return cell
         case 2:
-            let cell = tableView.dequeueReusableCell(withIdentifier: UITableViewCell.description(), for: indexPath)
+            
             cell.textLabel?.text = "style: concurrent"
             let wrapper = ActionCell()
             wrapper.delegate = self
@@ -236,7 +190,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                             ])
             return cell
         case 3:
-            let cell = tableView.dequeueReusableCell(withIdentifier: CustomTableViewCell.description(), for: indexPath) as! CustomTableViewCell
+            
             cell.accessoryType = .disclosureIndicator
             cell.button.addTarget(self, action: #selector(cellButtonClicked), for: .touchUpInside)
             let wrapper = ActionCell()
@@ -299,8 +253,17 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                             ])
             return cell
         default:
-            return tableView.dequeueReusableCell(withIdentifier: CustomTableViewCell.description(), for: indexPath) as! CustomTableViewCell
+            
+            // !! Modified. These cells should no have actions
+            cell.textLabel?.text = "Unwrapped Cell (No actions?!)"
+            
+            return cell
         }
+    }
+    
+    // // !! Modified.
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "section \(section.description)"
     }
     
     func cellButtonClicked() {
@@ -308,8 +271,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
 }
 
-extension ViewController: ActionCellDelegate {
 
+extension ViewController: ActionCellDelegate {
+    
     public func didActionTriggered(cell: UITableViewCell, action: String) {
         self.output.text = action + " clicked"
     }
